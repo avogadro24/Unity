@@ -1,0 +1,79 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class LocalTimer : MonoBehaviour
+{
+
+    void Update()
+    {
+        Gotimer();
+    }
+
+
+    class MyTimer
+    {
+        public float timerLimit;
+        public float timer;
+        public bool isTimerActive;
+        public System.Action timerAction;
+    }
+
+    [SerializeField] List<MyTimer> myTimers = new List<MyTimer>();
+
+    public void TurnAfterTimer(System.Action thisMethod, float timerLimitSec)// Use like TurnAfterTimer(  ()=>    "YOUMETHOD()", float sec "necessary delay" )
+    {
+        myTimers.Add(new MyTimer());
+
+        myTimers[myTimers.Count - 1].isTimerActive = true;
+        myTimers[myTimers.Count - 1].timerLimit = timerLimitSec;
+        myTimers[myTimers.Count - 1].timerAction = thisMethod;
+
+        //Debug.Log("startTimer -" + (myTimers.Count - 1));
+
+    }
+    private void Gotimer()
+    {
+
+
+        if (myTimers.Count > 0)
+        {
+            
+            foreach (var item in myTimers)
+            {
+                if (item.isTimerActive)
+                {
+                    if (item.timer < item.timerLimit)
+                    {
+                        item.timer += Time.deltaTime;
+                    }
+                    else if (item.timer > item.timerLimit)
+                    {
+                        item.isTimerActive = false;
+                        item.timer = 0;
+                        item.timerAction();
+
+                        //Debug.Log(string.Format("EndTimer - {0} sec", item.timerLimit));
+
+
+                    }
+                }
+            }
+
+            foreach (var item in myTimers)
+            {
+                if (!item.isTimerActive)
+                {
+                    myTimers.Remove(item);
+                    //Debug.Log(string.Format("DeleteTimer - {0} sec", item.timerLimit));
+                    //Debug.Log(myTimers.Count);
+                    break;
+                }
+
+            }
+
+            
+
+        }
+    }
+}
