@@ -1,2 +1,2 @@
 # Unity
-Universl timer for Unity
+Univers timer for Unity
